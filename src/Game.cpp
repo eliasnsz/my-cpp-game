@@ -10,6 +10,10 @@ void GameState::SpawnProjectile(Projectile projectile) {
   projectiles.emplace_back(projectile);
 }
 
+void GameState::SpawnEnemy(Enemy enemy) {
+  enemies.emplace_back(enemy);
+}
+
 void GameState::Update(float dt) {
   // Player
   player.Update(dt);
@@ -22,23 +26,27 @@ void GameState::Update(float dt) {
     projectiles.end()
   );
   
-  for (size_t i = 0; i < projectiles.size(); i++) {
-    projectiles[i].Update(dt);
-  }
+  for (auto& p :projectiles) { p.Update(dt); }
+
+  // Enemies
+  for (auto& e : enemies) { e.Update(dt); }
 }
 
 void GameState::Draw() const {
   BeginDrawing();
   ClearBackground(DARKGRAY);
   
+  // Debug
   DrawText(std::to_string(projectiles.size()).c_str(), 20, 20, 20, WHITE);
 
+  // Player
   player.Draw();
 
-  for (size_t i = 0; i < projectiles.size(); i++)
-  {
-    projectiles[i].Draw();
-  }
+  // Projectiles
+  for (auto& p : projectiles) { p.Draw(); }
+
+  // Enemies
+  for (auto& e : enemies) { e.Draw(); }
 
   EndDrawing();
 }

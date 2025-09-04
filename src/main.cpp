@@ -13,7 +13,12 @@ int main() {
     
     GameState game;
 
+    Enemy enemy(400, 200);
+    game.SpawnEnemy(enemy);
+
     while(!WindowShouldClose()) {
+        game.enemies[0].Shoot(game);
+        
         if(IsKeyDown(KEY_D)) { 
             game.player.MoveRight();
         };
