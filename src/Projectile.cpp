@@ -2,24 +2,22 @@
 #include "config.h"
 #include <math.h>
 
-Projectile::Projectile(float posX, float posY, float speed, Owner owner)
- : position({ posX, posY}), speed(speed), radius(6.0f), isActive(true), owner(owner) {
+Projectile::Projectile(Vector2 position, Vector2 direction, float speed, Owner owner)
+ : position(position), direction(Normalize(direction)), speed(speed), radius(6.0f), isActive(true), owner(owner) {}
+
+Vector2 Projectile::Normalize(Vector2 v) {
+  Vector2 direction;
   
-  Vector2 mousePos = GetMousePosition();
-
-  Vector2 dir = {
-      dir.x = position.x - mousePos.x,
-      dir.y = position.y - mousePos.y,
-  };
-
-  float vectorLength = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+  float vectorLength = std::sqrt(v.x * v.x + v.y * v.y);
 
   if (vectorLength != 0 )
   {
-    direction = { dir.x / vectorLength, dir.y / vectorLength };
+    direction = { v.x / vectorLength, v.y / vectorLength };
   } else {
     direction = { 0, 0 };
   }
+
+  return direction;
 }
 
 void Projectile::Update(float dt) {

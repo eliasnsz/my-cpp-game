@@ -44,13 +44,14 @@ void Player::Shoot(GameState& game) {
         return;
     }
     
-    Vector2 direction = GetMousePosition();
-    Vector2 startPos = {
-        startPos.x = position.x + (size.x / 2),
-        startPos.y = position.y
-    };
+    Vector2 sourcePos = { position.x + (size.x / 2), position.y };
+    Vector2 mousePos = GetMousePosition();
+    Vector2 direction = { sourcePos.x - mousePos.x, sourcePos.y - mousePos.y };
 
-    Projectile projectile(startPos.x, startPos.y, 400, Owner::PLAYER);
+    float projectileSpeed = 400.0f;
+
+    Projectile projectile(sourcePos, direction, projectileSpeed, Owner::PLAYER);
+    
     game.SpawnProjectile(projectile);
     lastShootTime = GetTime();
 }

@@ -14,10 +14,14 @@ class Projectile {
         float radius;
         bool isActive;
 
-        Projectile(float posX, float posY, float speed, Owner owner);
+        Projectile(Vector2 position, Vector2 direction, float speed, Owner owner);
 
+        
         void Update(float dt);
         void Draw() const;
+
+    private:
+        Vector2 Normalize(Vector2 v);
 };
 
 #endif
