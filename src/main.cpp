@@ -17,7 +17,7 @@ int main() {
     game.SpawnEnemy(enemy);
 
     while(!WindowShouldClose()) {
-        game.enemies[0].Shoot(game);
+        game.enemies[0].UpdateEnemyAI(game);
         
         if(IsKeyDown(KEY_D)) { 
             game.player.MoveRight();

@@ -17,6 +17,10 @@ Player::Player(float posX, float posY) :
     canShoot(true),
     lastShootTime(GetTime() - 1 / attackSpeed) {}
     
+Vector2 Player::GetCenter() {
+    return { position.x + size.x / 2.0f, position.y + size.y / 2.0f };
+}
+    
 void Player::MoveRight() {
     position.x += velocity.x * GetFrameTime();
 

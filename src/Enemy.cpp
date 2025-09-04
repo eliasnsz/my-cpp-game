@@ -1,7 +1,9 @@
 #include "Enemy.h"
 
 #include <iostream>
+#include <math.h>
 #include <raylib.h>
+#include <raymath.h>
 
 #include "config.h"
 #include "Projectile.h"
@@ -9,22 +11,25 @@
 
 Enemy::Enemy(float posX, float posY) : 
     position({ posX, posY }), 
-    velocity({ 300.0f, 0.0f }),
+    velocity({ 300.0f, 150.0f }),
+    state(ATTACK),
     size({ 40.0f, 40.0f }),
     attackSpeed(0.65),
     canShoot(true),
     lastShootTime(GetTime() - 1 / attackSpeed) {}
+
+Vector2 Enemy::GetCenter() const {
+    return { position.x + (size.x / 2.0f), position.y + (size.y / 2.0f) };
+}
     
 void Enemy::Shoot(GameState& game) {
     if(!canShoot) {
         return;
     }
     
-    Player player = game.player;
-    
-    Vector2 sourcePos = { position.x + (size.x / 2), position.y };
-    Vector2 playerPos = { player.position.x + (player.size.x / 2), player.position.y + (player.size.x / 2) };
-    Vector2 direction = { sourcePos.x - playerPos.x, sourcePos.y - playerPos.y };
+    Vector2 sourcePos = GetCenter();
+    Vector2 playerPos = game.player.GetCenter();
+    Vector2 direction = Vector2Subtract(sourcePos, playerPos);
 
     float projectileSpeed = 300.0f;
 
@@ -34,10 +39,52 @@ void Enemy::Shoot(GameState& game) {
     lastShootTime = GetTime();
 }
 
+void Enemy::UpdateEnemyAI(GameState& game) {
+    float distance = Vector2Distance(position, game.player.position);
+
+    if(distance > 500) {
+        state = CHASE;
+    } else {
+        state = ATTACK;
+    }
+
+    switch (state) {
+    case CHASE:
+        Chase(game.player.position);
+        break;
+    
+    case ATTACK:
+        Shoot(game);
+        velocity.x = 0;
+        velocity.y = 0;
+        break;
+        
+    default:
+        break;
+    }
+}
+
+void Enemy::Chase(Vector2 playerPosition) {
+    if (velocity.x < 300.0f) { velocity.x += 25.0f; }
+    if (velocity.y < 150.0f) { velocity.y += 25.0f; }
+
+    Vector2 direction = Vector2Normalize(Vector2Subtract(position, playerPosition));
+    
+    position.x -= velocity.x * direction.x * GetFrameTime();
+    position.y -= velocity.y * direction.y * GetFrameTime();
+}
+
 void Enemy::Update(float dt) {
     canShoot = GetTime() - lastShootTime >= 1 / attackSpeed;
 }
 
 void Enemy::Draw() const {
-    DrawRectangleV(position, size, RED);
+    Rectangle enemyRect = {
+        x: position.x,
+        y: position.y,
+        width: size.x,
+        height: size.y
+    };
+
+    DrawRectangleRec(enemyRect, RED);
 }

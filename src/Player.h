@@ -16,6 +16,7 @@ class Player {
         
         Player(float x, float y);
         
+        Vector2 GetCenter();
         void MoveRight();
         void MoveLeft();
         void Jump();
