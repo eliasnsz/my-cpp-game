@@ -12,9 +12,10 @@ class Projectile {
         Owner owner;
         float speed;
         float radius;
+        float damage;
         bool isActive;
 
-        Projectile(Vector2 position, Vector2 direction, float speed, Owner owner);
+        Projectile(Vector2 position, Vector2 direction, float speed, float damage, Owner owner);
 
         
         void Update(float dt);

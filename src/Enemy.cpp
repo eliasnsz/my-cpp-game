@@ -10,8 +10,13 @@
 #include "Game.h"
 
 Enemy::Enemy(float posX, float posY) : 
+    hp(20.0f), 
+    hpMax(20.0f), 
+    baseDamage(4.0f),
+    damageMultiplier(1.0f),
     position({ posX, posY }), 
     velocity({ 300.0f, 150.0f }),
+    isAlive(true),
     state(ATTACK),
     size({ 40.0f, 40.0f }),
     attackSpeed(0.65),
@@ -32,8 +37,9 @@ void Enemy::Shoot(GameState& game) {
     Vector2 direction = Vector2Subtract(sourcePos, playerPos);
 
     float projectileSpeed = 300.0f;
+    float projectileDamage = baseDamage * damageMultiplier;
 
-    Projectile projectile(sourcePos, direction, projectileSpeed, Owner::ENEMY);
+    Projectile projectile(sourcePos, direction, projectileSpeed, projectileDamage, Owner::ENEMY);
     
     game.SpawnProjectile(projectile);
     lastShootTime = GetTime();
@@ -76,6 +82,11 @@ void Enemy::Chase(Vector2 playerPosition) {
 
 void Enemy::Update(float dt) {
     canShoot = GetTime() - lastShootTime >= 1 / attackSpeed;
+
+    if (hp <= 0) {
+        isAlive = false;
+    }
+    
 }
 
 void Enemy::Draw() const {
@@ -86,5 +97,18 @@ void Enemy::Draw() const {
         height: size.y
     };
 
-    DrawRectangleRec(enemyRect, RED);
+    float hpPercent = hp / hpMax;
+    
+    const unsigned char minAlpha = 100;
+    const unsigned char maxAlpha = 255;
+
+    // interpola entre min e max
+    unsigned char alpha = (unsigned char)(minAlpha + hpPercent * (maxAlpha - minAlpha));
+
+    Color color = { 255, 0, 0, alpha };
+
+    // largura proporcional ao HP
+    int barWidth = (int)(100 * hpPercent);
+    
+    DrawRectangleRec(enemyRect, color);
 }

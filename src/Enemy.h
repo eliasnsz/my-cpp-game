@@ -13,10 +13,15 @@ enum EnemyState {
 
 class Enemy {
     public: 
+        float hp;
+        float hpMax;
+        float baseDamage;
+        float damageMultiplier;
         Vector2 position;
         Vector2 velocity;
         Vector2 size;
         EnemyState state;
+        bool isAlive;
         float rotate;
         float attackSpeed;
         

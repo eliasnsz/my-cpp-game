@@ -8,6 +8,10 @@ class GameState;
 
 class Player {
     public: 
+        float hp;
+        float hpMax;
+        float baseDamage;
+        float damageMultiplier;
         Vector2 position;
         Vector2 velocity;
         Vector2 size;

@@ -8,10 +8,14 @@
 #include "Game.h"
 
 Player::Player(float posX, float posY) : 
+    hp(20.0f),
+    hpMax(20.0f),
+    baseDamage(4.0f),
+    damageMultiplier(1.0f), 
     position({ posX, posY }), 
     velocity({ 300.0f, 0.0f }),
     size({ 40.0f, 40.0f }),
-    attackSpeed(0.85),
+    attackSpeed(0.85f),
     jumpHeigth(480.0f),
     isGrounded(false),
     canShoot(true),
@@ -53,8 +57,9 @@ void Player::Shoot(GameState& game) {
     Vector2 direction = { sourcePos.x - mousePos.x, sourcePos.y - mousePos.y };
 
     float projectileSpeed = 400.0f;
+    float projectileDamage = baseDamage * damageMultiplier;
 
-    Projectile projectile(sourcePos, direction, projectileSpeed, Owner::PLAYER);
+    Projectile projectile(sourcePos, direction, projectileSpeed, projectileDamage, Owner::PLAYER);
     
     game.SpawnProjectile(projectile);
     lastShootTime = GetTime();

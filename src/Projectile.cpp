@@ -2,8 +2,14 @@
 #include "config.h"
 #include <math.h>
 
-Projectile::Projectile(Vector2 position, Vector2 direction, float speed, Owner owner)
- : position(position), direction(Normalize(direction)), speed(speed), radius(6.0f), isActive(true), owner(owner) {}
+Projectile::Projectile(Vector2 position, Vector2 direction, float speed, float damage, Owner owner) : 
+  position(position), 
+  direction(Normalize(direction)), 
+  speed(speed), 
+  damage(damage), 
+  radius(6.0f), 
+  isActive(true), 
+  owner(owner) {}
 
 Vector2 Projectile::Normalize(Vector2 v) {
   Vector2 direction;

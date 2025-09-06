@@ -15,6 +15,11 @@ void GameState::SpawnEnemy(Enemy enemy) {
 }
 
 void GameState::Update(float dt) {
+  if (player.hp <= 0) {
+    isGameOver = true;
+    return;
+  }
+  
   // Player
   player.Update(dt);
 
@@ -29,7 +34,47 @@ void GameState::Update(float dt) {
   for (auto& p :projectiles) { p.Update(dt); }
 
   // Enemies
+  enemies.erase(
+    std::remove_if(enemies.begin(), enemies.end(), [](const Enemy& e){
+        return !e.isAlive;
+    }),
+    enemies.end()
+  );
+  
   for (auto& e : enemies) { e.Update(dt); }
+
+  // Colision Projectile X Enemy
+  for (auto& p : projectiles) {
+    for (auto& e : enemies) {
+      Rectangle enemyRec = { e.position.x, e.position.y, e.size.x, e.size.y };
+
+      if (CheckCollisionCircleRec(p.position, p.radius, enemyRec)) {
+        if (p.owner == PLAYER)
+        {
+          p.isActive = false;
+          e.hp -= p.damage;
+        }
+        
+      }
+    }
+
+    // Colision Player X Enemy Projectile
+    Rectangle playerRec = { 
+      player.position.x,
+      player.position.y,
+      player.size.x,
+      player.size.y 
+    };
+
+    if (CheckCollisionCircleRec(p.position, p.radius, playerRec)) {
+      if (p.owner == ENEMY)
+      {
+        p.isActive = false;
+        player.hp -= p.damage;
+      }
+      
+    }
+  }
 }
 
 void GameState::Draw() const {
@@ -37,7 +82,9 @@ void GameState::Draw() const {
   ClearBackground(DARKGRAY);
   
   // Debug
-  DrawText(std::to_string(projectiles.size()).c_str(), 20, 20, 20, WHITE);
+  DrawFPS(SCREEN_WIDTH - 100, 20);
+  DrawRectangle(20, 20, (player.hp / player.hpMax) * 100, 20, RED);
+  DrawRectangleLines(20, 20, 100, 20, WHITE);
 
   // Player
   player.Draw();
